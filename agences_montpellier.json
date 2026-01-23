@@ -72,7 +72,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6061201,
-    "lng": 3.8896355
+    "lng": 3.8896355,
+    "telephone": "04 67 99 99 99"
   },
   {
     "id": 86212,
@@ -146,7 +147,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6004951,
-    "lng": 3.867432
+    "lng": 3.867432,
+    "telephone": "04 67 27 15 55"
   },
   {
     "id": 44847,
@@ -158,7 +160,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6015344,
-    "lng": 3.9002685
+    "lng": 3.9002685,
+    "telephone": "04 67 85 00 00"
   },
   {
     "id": 17757,
@@ -454,7 +457,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.5922669,
-    "lng": 3.9056318
+    "lng": 3.9056318,
+    "telephone": "04 67 42 89 68"
   },
   {
     "id": 24485,
@@ -466,7 +470,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.5922669,
-    "lng": 3.9056318
+    "lng": 3.9056318,
+    "telephone": "04 67 12 38 30"
   },
   {
     "id": 28817,
@@ -503,7 +508,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.602972,
-    "lng": 3.8816166
+    "lng": 3.8816166,
+    "telephone": "04 67 60 60 63"
   },
   {
     "id": 33872,
@@ -552,7 +558,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6077261,
-    "lng": 3.8744044
+    "lng": 3.8744044,
+    "telephone": "04 11 11 02 70"
   },
   {
     "id": 69326,
@@ -564,7 +571,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6148029,
-    "lng": 3.8700167
+    "lng": 3.8700167,
+    "telephone": "04 67 60 70 15"
   },
   {
     "id": 40189,
@@ -588,7 +596,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6069185,
-    "lng": 3.8760849
+    "lng": 3.8760849,
+    "telephone": "04 67 02 03 31"
   },
   {
     "id": 69397,
@@ -636,7 +645,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6320173,
-    "lng": 3.875559
+    "lng": 3.875559,
+    "telephone": "04 67 82 91 10"
   },
   {
     "id": 43797,
@@ -660,7 +670,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6267904,
-    "lng": 3.8594306
+    "lng": 3.8594306,
+    "telephone": "04 99 23 30 03"
   },
   {
     "id": 47058,
@@ -1398,7 +1409,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.5979963,
-    "lng": 3.864972
+    "lng": 3.864972,
+    "telephone": "04 67 06 87 00"
   },
   {
     "id": 41402,
@@ -1676,7 +1688,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.5976066,
-    "lng": 3.8995598
+    "lng": 3.8995598,
+    "telephone": "04 67 42 89 68"
   },
   {
     "id": 3020,
@@ -1712,7 +1725,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6059233,
-    "lng": 3.9204367
+    "lng": 3.9204367,
+    "telephone": "04 67 99 99 99"
   },
   {
     "id": 63065,
@@ -1943,7 +1957,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6124504,
-    "lng": 3.8655815
+    "lng": 3.8655815,
+    "telephone": "04 67 02 02 02"
   },
   {
     "id": 54379,
@@ -2077,7 +2092,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.5918139,
-    "lng": 3.8738914
+    "lng": 3.8738914,
+    "telephone": "04 67 06 87 00"
   },
   {
     "id": 67789,
@@ -2321,7 +2337,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.5954038,
-    "lng": 3.8877939
+    "lng": 3.8877939,
+    "telephone": "04 67 99 99 99"
   },
   {
     "id": 37428,
@@ -2877,7 +2894,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.5942863,
-    "lng": 3.8816687
+    "lng": 3.8816687,
+    "telephone": "04 67 99 99 99"
   },
   {
     "id": 81785,
@@ -2901,7 +2919,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6248936,
-    "lng": 3.8389446
+    "lng": 3.8389446,
+    "telephone": "04 67 99 99 99"
   },
   {
     "id": 43660,
@@ -3326,7 +3345,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6197247,
-    "lng": 3.8732118
+    "lng": 3.8732118,
+    "telephone": "04 67 02 25 25"
   },
   {
     "id": 14659,
@@ -3338,7 +3358,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6157204,
-    "lng": 3.8823839
+    "lng": 3.8823839,
+    "telephone": "04 67 13 26 36"
   },
   {
     "id": 18169,
@@ -3386,7 +3407,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6015344,
-    "lng": 3.9002685
+    "lng": 3.9002685,
+    "telephone": "04 67 85 00 00"
   },
   {
     "id": 21769,
@@ -3422,7 +3444,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.5995038,
-    "lng": 3.9067183
+    "lng": 3.9067183,
+    "telephone": "04 67 99 99 99"
   },
   {
     "id": 23291,
@@ -3434,7 +3457,8 @@
     "ville": "MONTPELLIER",
     "activites": [],
     "lat": 43.6057433,
-    "lng": 3.8932463
+    "lng": 3.8932463,
+    "telephone": "04 67 42 89 68"
   },
   {
     "id": 24004,
