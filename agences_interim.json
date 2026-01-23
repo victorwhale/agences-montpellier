@@ -1,0 +1,222 @@
+[
+  {
+    "id": 1,
+    "nom": "Interaction Intérim Montpellier",
+    "adresse": "280 Rue Alfred Nobel",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 08 00 00",
+    "lat": 43.6045,
+    "lng": 3.9125,
+    "specialites": ["BTP", "Industrie", "Tertiaire"]
+  },
+  {
+    "id": 2,
+    "nom": "TOMA Intérim Montpellier",
+    "adresse": "1 Rue de la Fontaine de Lattes",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 68 78 33",
+    "lat": 43.5985,
+    "lng": 3.8978,
+    "specialites": ["BTP", "Industrie", "Logistique"]
+  },
+  {
+    "id": 3,
+    "nom": "Aquila RH Montpellier",
+    "adresse": "145 Avenue de Palavas",
+    "code_postal": "34070",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 99 93 94",
+    "lat": 43.5892,
+    "lng": 3.8756,
+    "specialites": ["Industrie", "BTP", "Tertiaire"]
+  },
+  {
+    "id": 4,
+    "nom": "LIP Montpellier",
+    "adresse": "2 Rue de Claret",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 34 48 13 48",
+    "lat": 43.6089,
+    "lng": 3.8823,
+    "specialites": ["Industrie", "BTP", "Transport"]
+  },
+  {
+    "id": 5,
+    "nom": "Abalone Montpellier",
+    "adresse": "464 Rue Henri Becquerel",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 55 87 90",
+    "lat": 43.6032,
+    "lng": 3.9089,
+    "specialites": ["BTP", "Industrie", "Transport"]
+  },
+  {
+    "id": 6,
+    "nom": "R.A.S Intérim Montpellier",
+    "adresse": "15 Rue de la République",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 58 90 12",
+    "lat": 43.6102,
+    "lng": 3.8765,
+    "specialites": ["Généraliste"]
+  },
+  {
+    "id": 7,
+    "nom": "Temporis Montpellier",
+    "adresse": "7 Rue Maguelone",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 06 01 06",
+    "lat": 43.6048,
+    "lng": 3.8795,
+    "specialites": ["BTP", "Industrie", "Tertiaire"]
+  },
+  {
+    "id": 8,
+    "nom": "SATIS Intérim Montpellier",
+    "adresse": "71 Plan des 4 Seigneurs",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 99 77 29 30",
+    "lat": 43.6298,
+    "lng": 3.8612,
+    "specialites": ["BTP", "Industrie"]
+  },
+  {
+    "id": 9,
+    "nom": "Triangle Intérim Montpellier",
+    "adresse": "46 Allée de Mycènes",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 99 05 05",
+    "lat": 43.5943,
+    "lng": 3.8945,
+    "specialites": ["BTP", "Industrie", "Transport"]
+  },
+  {
+    "id": 10,
+    "nom": "Domino RH Montpellier",
+    "adresse": "146 Rue Frimaire",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 64 34 00",
+    "lat": 43.6125,
+    "lng": 3.9056,
+    "specialites": ["Médical", "Social", "Tertiaire"]
+  },
+  {
+    "id": 11,
+    "nom": "Appel Médical Montpellier",
+    "adresse": "111 Place Georges Frêche",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 10 46 00",
+    "lat": 43.6012,
+    "lng": 3.8934,
+    "specialites": ["Médical", "Paramédical"]
+  },
+  {
+    "id": 12,
+    "nom": "Staffmatch Montpellier",
+    "adresse": "20 Rue de l'Aiguelongue",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 69 02 02",
+    "lat": 43.6234,
+    "lng": 3.8678,
+    "specialites": ["Hôtellerie", "Restauration", "Événementiel"]
+  },
+  {
+    "id": 13,
+    "nom": "Aile Médicale Montpellier",
+    "adresse": "430 Rue Raymond Recouly",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 75 07 07",
+    "lat": 43.6156,
+    "lng": 3.9023,
+    "specialites": ["Médical", "Paramédical"]
+  },
+  {
+    "id": 14,
+    "nom": "Team Staffing Médical",
+    "adresse": "55 Avenue de Toulouse",
+    "code_postal": "34070",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 79 35 35",
+    "lat": 43.5956,
+    "lng": 3.8512,
+    "specialites": ["Médical", "Paramédical", "Social"]
+  },
+  {
+    "id": 15,
+    "nom": "Vitalis Medical Montpellier",
+    "adresse": "250 Rue du Puech Radier",
+    "code_postal": "34970",
+    "ville": "LATTES",
+    "telephone": "04 67 69 47 47",
+    "lat": 43.5712,
+    "lng": 3.9023,
+    "specialites": ["Médical", "Paramédical"]
+  },
+  {
+    "id": 16,
+    "nom": "Ergalis Montpellier",
+    "adresse": "1025 Rue Henri Becquerel",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 15 97 97",
+    "lat": 43.6045,
+    "lng": 3.9145,
+    "specialites": ["Industrie", "Tertiaire", "BTP"]
+  },
+  {
+    "id": 17,
+    "nom": "Actual Montpellier",
+    "adresse": "3 Rue Jules Ferry",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 58 77 00",
+    "lat": 43.6078,
+    "lng": 3.8756,
+    "specialites": ["Généraliste"]
+  },
+  {
+    "id": 18,
+    "nom": "Job&Box Montpellier",
+    "adresse": "124 Avenue du Père Soulas",
+    "code_postal": "34090",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 63 05 05",
+    "lat": 43.6189,
+    "lng": 3.8534,
+    "specialites": ["BTP", "Industrie"]
+  },
+  {
+    "id": 19,
+    "nom": "Workéo Montpellier",
+    "adresse": "200 Avenue du Pont Trinquat",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 34 35 69 69",
+    "lat": 43.6012,
+    "lng": 3.9178,
+    "specialites": ["BTP", "Industrie", "Logistique"]
+  },
+  {
+    "id": 20,
+    "nom": "Force Interim Montpellier",
+    "adresse": "85 Avenue de Maurin",
+    "code_postal": "34000",
+    "ville": "MONTPELLIER",
+    "telephone": "04 67 65 32 32",
+    "lat": 43.5978,
+    "lng": 3.8412,
+    "specialites": ["BTP", "Industrie", "Transport"]
+  }
+]
