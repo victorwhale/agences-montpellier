@@ -36,6 +36,14 @@
         .agency-phone { font-size: 0.85rem; color: #667eea; margin-bottom: 8px; }
         .agency-phone a { color: #667eea; text-decoration: none; }
         .agency-phone a:hover { text-decoration: underline; }
+        .agency-actions { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+        .action-btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; font-weight: 500; transition: all 0.2s; }
+        .action-btn.phone { background: #e8f5e9; color: #2e7d32; }
+        .action-btn.phone:hover { background: #c8e6c9; }
+        .action-btn.gps { background: #e3f2fd; color: #1565c0; }
+        .action-btn.gps:hover { background: #bbdefb; }
+        .action-btn.google { background: #fff3e0; color: #e65100; }
+        .action-btn.google:hover { background: #ffe0b2; }
         .agency-tags { display: flex; gap: 5px; flex-wrap: wrap; }
         .tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; background: #e8f4fd; color: #1976d2; }
         .tag.transaction { background: #e8f5e9; color: #2e7d32; }
@@ -49,6 +57,11 @@
         .popup-address { font-size: 0.85rem; color: #666; margin-bottom: 5px; }
         .popup-phone { font-size: 0.85rem; color: #667eea; margin-bottom: 8px; }
         .popup-phone a { color: #667eea; text-decoration: none; font-weight: 500; }
+        .popup-actions { display: flex; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
+        .popup-actions a { display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; text-decoration: none; font-weight: 500; }
+        .popup-actions .phone { background: #e8f5e9; color: #2e7d32; }
+        .popup-actions .gps { background: #e3f2fd; color: #1565c0; }
+        .popup-actions .google { background: #fff3e0; color: #e65100; }
         .popup-tags { display: flex; gap: 4px; flex-wrap: wrap; }
         @media (max-width: 768px) { .container { flex-direction: column; } .sidebar { width: 100%; height: 50vh; } #map { height: 50vh; } }
     </style>
@@ -142,8 +155,10 @@
                         const cls = act === 'Transaction' ? 'transaction' : act === 'Gestion immobilière' ? 'gestion' : act === 'Syndic' ? 'syndic' : '';
                         return `<span class="tag ${cls}">${act}</span>`;
                     }).join('');
-                    const phonePopup = agency.telephone ? `<div class="popup-phone">📞 <a href="tel:${agency.telephone}">${agency.telephone}</a></div>` : '';
-                    marker.bindPopup(`<div class="popup-title">${agency.nom}</div><div class="popup-address">${agency.adresse}<br>${agency.code_postal} ${agency.ville}</div>${phonePopup}<div class="popup-tags">${tagsHtml}</div>`);
+                    const phonePopupBtn = agency.telephone ? `<a href="tel:${agency.telephone}" class="phone">📞 Appeler</a>` : '';
+                    const gpsPopupBtn = `<a href="https://www.google.com/maps/dir/?api=1&destination=${agency.lat},${agency.lng}" target="_blank" class="gps">🧭 GPS</a>`;
+                    const googlePopupBtn = `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(agency.nom)}+${encodeURIComponent(agency.adresse)}+${encodeURIComponent(agency.ville)}" target="_blank" class="google">📍 Fiche</a>`;
+                    marker.bindPopup(`<div class="popup-title">${agency.nom}</div><div class="popup-address">${agency.adresse}<br>${agency.code_postal} ${agency.ville}</div><div class="popup-actions">${phonePopupBtn}${gpsPopupBtn}${googlePopupBtn}</div><div class="popup-tags">${tagsHtml}</div>`);
                     marker.agencyId = agency.id;
                     markers.addLayer(marker);
                 }
@@ -173,11 +188,14 @@
                     return `<span class="tag ${cls}">${act}</span>`;
                 }).join('');
                 const geocodedClass = (a.lat && a.lng) ? 'geocoded' : '';
-                const phoneHtml = a.telephone ? `<div class="agency-phone">📞 <a href="tel:${a.telephone}">${a.telephone}</a></div>` : '';
+                const phoneBtn = a.telephone ? `<a href="tel:${a.telephone}" class="action-btn phone" onclick="event.stopPropagation()">📞 ${a.telephone}</a>` : '';
+                const gpsBtn = (a.lat && a.lng) ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}" target="_blank" class="action-btn gps" onclick="event.stopPropagation()">🧭 GPS</a>` : '';
+                const googleBtn = (a.lat && a.lng) ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.nom)}+${encodeURIComponent(a.adresse)}+${encodeURIComponent(a.ville)}" target="_blank" class="action-btn google" onclick="event.stopPropagation()">📍 Google</a>` : '';
+                const actionsHtml = (phoneBtn || gpsBtn || googleBtn) ? `<div class="agency-actions">${phoneBtn}${gpsBtn}${googleBtn}</div>` : '';
                 return `<div class="agency-card ${geocodedClass}" data-id="${a.id}" data-lat="${a.lat || ''}" data-lng="${a.lng || ''}">
                     <div class="agency-name">${a.nom}</div>
                     <div class="agency-address">${a.adresse}, ${a.code_postal} ${a.ville}</div>
-                    ${phoneHtml}
+                    ${actionsHtml}
                     <div class="agency-tags">${tagsHtml}</div>
                 </div>`;
             }).join('');
