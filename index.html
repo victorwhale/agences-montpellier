@@ -60,6 +60,15 @@
         .tag.top-cible { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
         .agency-note { font-size: 0.85rem; color: #f57c00; margin-bottom: 5px; font-weight: 500; }
         .agency-notes { font-size: 0.8rem; color: #888; font-style: italic; margin-top: 5px; }
+        .status-btns { display: flex; gap: 6px; position: absolute; top: 10px; right: 10px; }
+        .status-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e0e0e0; background: white; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .status-btn:hover { transform: scale(1.15); }
+        .status-btn.fav { border-color: #e0e0e0; }
+        .status-btn.fav.active { border-color: #e53935; background: #ffebee; }
+        .status-btn.done { border-color: #e0e0e0; }
+        .status-btn.done.active { border-color: #43a047; background: #e8f5e9; }
+        .agency-card { position: relative; }
+        .agency-card.is-done { opacity: 0.5; }
         .no-results { text-align: center; padding: 40px 20px; color: #999; }
         #map { flex: 1; height: 100vh; }
         .loading-bar { background: #667eea; color: white; padding: 8px 15px; font-size: 0.85rem; text-align: center; }
@@ -126,6 +135,30 @@
         let currentFilter = 'all';
         let searchQuery = '';
         let currentTab = 'immobilier';
+
+        // Persisted favorites & done state
+        const favorites = JSON.parse(localStorage.getItem('agences_favorites') || '{}');
+        const doneItems = JSON.parse(localStorage.getItem('agences_done') || '{}');
+
+        function getStateKey(item) {
+            return currentTab + '_' + item.id;
+        }
+
+        function toggleFav(tab, id, event) {
+            event.stopPropagation();
+            const key = tab + '_' + id;
+            if (favorites[key]) { delete favorites[key]; } else { favorites[key] = true; }
+            localStorage.setItem('agences_favorites', JSON.stringify(favorites));
+            renderAgencies();
+        }
+
+        function toggleDone(tab, id, event) {
+            event.stopPropagation();
+            const key = tab + '_' + id;
+            if (doneItems[key]) { delete doneItems[key]; } else { doneItems[key] = true; }
+            localStorage.setItem('agences_done', JSON.stringify(doneItems));
+            renderAgencies();
+        }
 
         // Initialize map centered on Montpellier
         function initMap() {
@@ -228,7 +261,7 @@
 
         function getFilteredAgencies() {
             const data = getCurrentData();
-            return data.filter(a => {
+            const result = data.filter(a => {
                 let matchesFilter = currentFilter === 'all';
                 if (!matchesFilter) {
                     if (currentTab === 'immobilier' && a.activites) {
@@ -246,6 +279,21 @@
                 const matchesSearch = !searchQuery || a.nom.toLowerCase().includes(searchQuery.toLowerCase()) || (a.adresse && a.adresse.toLowerCase().includes(searchQuery.toLowerCase())) || (a.type_cuisine && a.type_cuisine.toLowerCase().includes(searchQuery.toLowerCase()));
                 return matchesFilter && matchesSearch;
             });
+
+            // Sort: favorites first, done last
+            result.sort((a, b) => {
+                const aFav = favorites[currentTab + '_' + a.id] ? 1 : 0;
+                const bFav = favorites[currentTab + '_' + b.id] ? 1 : 0;
+                const aDone = doneItems[currentTab + '_' + a.id] ? 1 : 0;
+                const bDone = doneItems[currentTab + '_' + b.id] ? 1 : 0;
+                // Done goes to bottom
+                if (aDone !== bDone) return aDone - bDone;
+                // Favorites go to top
+                if (aFav !== bFav) return bFav - aFav;
+                return 0;
+            });
+
+            return result;
         }
 
         function renderAgencies() {
@@ -279,7 +327,14 @@
                 const actionsHtml = `<div class="agency-actions">${phoneBtn}${gpsBtn}${googleBtn}</div>`;
                 const noteHtml = (currentTab === 'restaurants' && a.note_google) ? `<div class="agency-note">⭐ ${a.note_google}</div>` : '';
                 const notesHtml = (currentTab === 'restaurants' && a.notes) ? `<div class="agency-notes">${a.notes}</div>` : '';
-                return `<div class="agency-card ${geocodedClass}" data-id="${a.id}" data-lat="${a.lat || ''}" data-lng="${a.lng || ''}">
+                const isFav = favorites[currentTab + '_' + a.id];
+                const isDone = doneItems[currentTab + '_' + a.id];
+                const doneClass = isDone ? 'is-done' : '';
+                return `<div class="agency-card ${geocodedClass} ${doneClass}" data-id="${a.id}" data-lat="${a.lat || ''}" data-lng="${a.lng || ''}">
+                    <div class="status-btns">
+                        <button class="status-btn fav ${isFav ? 'active' : ''}" onclick="toggleFav('${currentTab}', ${a.id}, event)" title="Favori">${isFav ? '❤️' : '🤍'}</button>
+                        <button class="status-btn done ${isDone ? 'active' : ''}" onclick="toggleDone('${currentTab}', ${a.id}, event)" title="Fait">${isDone ? '✅' : '⬜'}</button>
+                    </div>
                     <div class="agency-name">${a.nom}</div>
                     <div class="agency-address">${a.adresse}, ${a.code_postal} ${a.ville}</div>
                     ${noteHtml}
