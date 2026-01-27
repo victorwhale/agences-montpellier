@@ -207,8 +207,8 @@
                     }
                     const phonePopupBtn = agency.telephone ? `<a href="tel:${agency.telephone}" class="phone">📞 Appeler</a>` : '';
                     const gpsPopupBtn = `<a href="https://www.google.com/maps/dir/?api=1&destination=${agency.lat},${agency.lng}" target="_blank" class="gps">🧭 GPS</a>`;
-                    const googleLink = (currentTab === 'restaurants' && agency.lien_google_maps) ? agency.lien_google_maps : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(agency.nom)}+${encodeURIComponent(agency.adresse)}+${encodeURIComponent(agency.ville)}`;
-                    const googlePopupBtn = `<a href="${googleLink}" target="_blank" class="google">📍 Fiche Google</a>`;
+                    const googleSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(agency.nom + ' ' + (agency.code_postal || '') + ' ' + (agency.ville || ''))}`;
+                    const googlePopupBtn = `<a href="${googleSearchUrl}" target="_blank" class="google">📍 Fiche Google</a>`;
                     marker.bindPopup(`<div class="popup-title">${agency.nom}</div><div class="popup-address">${agency.adresse}<br>${agency.code_postal} ${agency.ville}</div>${agency.note_google ? '<div class="popup-phone">⭐ ' + agency.note_google + '</div>' : ''}<div class="popup-actions">${phonePopupBtn}${gpsPopupBtn}${googlePopupBtn}</div><div class="popup-tags">${tagsHtml}</div>`);
                     marker.agencyId = agency.id;
                     markers.addLayer(marker);
@@ -274,8 +274,8 @@
                 const geocodedClass = (a.lat && a.lng) ? 'geocoded' : '';
                 const phoneBtn = a.telephone ? `<a href="tel:${a.telephone}" class="action-btn phone" onclick="event.stopPropagation()">📞 ${a.telephone}</a>` : '';
                 const gpsBtn = (a.lat && a.lng) ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}" target="_blank" class="action-btn gps" onclick="event.stopPropagation()">🧭 GPS</a>` : '';
-                const googleLink = (currentTab === 'restaurants' && a.lien_google_maps) ? a.lien_google_maps : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.nom)}+${encodeURIComponent(a.adresse)}+${encodeURIComponent(a.ville)}`;
-                const googleBtn = `<a href="${googleLink}" target="_blank" class="action-btn google" onclick="event.stopPropagation()">📍 Fiche Google</a>`;
+                const googleSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.nom + ' ' + (a.code_postal || '') + ' ' + (a.ville || ''))}`;
+                const googleBtn = `<a href="${googleSearchUrl}" target="_blank" class="action-btn google" onclick="event.stopPropagation()">📍 Fiche Google</a>`;
                 const actionsHtml = `<div class="agency-actions">${phoneBtn}${gpsBtn}${googleBtn}</div>`;
                 const noteHtml = (currentTab === 'restaurants' && a.note_google) ? `<div class="agency-note">⭐ ${a.note_google}</div>` : '';
                 const notesHtml = (currentTab === 'restaurants' && a.notes) ? `<div class="agency-notes">${a.notes}</div>` : '';
