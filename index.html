@@ -53,6 +53,13 @@
         .tag.transaction { background: #e8f5e9; color: #2e7d32; }
         .tag.gestion { background: #fff3e0; color: #f57c00; }
         .tag.syndic { background: #fce4ec; color: #c2185b; }
+        .tag.cuisine { background: #f3e5f5; color: #7b1fa2; }
+        .tag.note-high { background: #e8f5e9; color: #2e7d32; }
+        .tag.note-mid { background: #fff3e0; color: #f57c00; }
+        .tag.note-low { background: #fce4ec; color: #c2185b; }
+        .tag.top-cible { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
+        .agency-note { font-size: 0.85rem; color: #f57c00; margin-bottom: 5px; font-weight: 500; }
+        .agency-notes { font-size: 0.8rem; color: #888; font-style: italic; margin-top: 5px; }
         .no-results { text-align: center; padding: 40px 20px; color: #999; }
         #map { flex: 1; height: 100vh; }
         .loading-bar { background: #667eea; color: white; padding: 8px 15px; font-size: 0.85rem; text-align: center; }
@@ -80,6 +87,7 @@
                     <button class="tab-btn active" data-tab="immobilier">Immobilier</button>
                     <button class="tab-btn" data-tab="interim">Intérim</button>
                     <button class="tab-btn" data-tab="recrutement">Recrutement</button>
+                    <button class="tab-btn" data-tab="restaurants">Restaurants</button>
                 </div>
                 <div class="stats">
                     <div class="stat">
@@ -114,6 +122,7 @@
         let agenciesData = [];
         let interimData = [];
         let recrutementData = [];
+        let restaurantsData = [];
         let currentFilter = 'all';
         let searchQuery = '';
         let currentTab = 'immobilier';
@@ -131,14 +140,16 @@
         // Load all data sources
         async function loadAgencies() {
             try {
-                const [immoResponse, interimResponse, recrutementResponse] = await Promise.all([
+                const [immoResponse, interimResponse, recrutementResponse, restaurantsResponse] = await Promise.all([
                     fetch('agences_montpellier.json'),
                     fetch('agences_interim.json'),
-                    fetch('cabinets_recrutement.json')
+                    fetch('cabinets_recrutement.json'),
+                    fetch('restaurants_sjv.json')
                 ]);
                 agenciesData = await immoResponse.json();
                 interimData = await interimResponse.json();
                 recrutementData = await recrutementResponse.json();
+                restaurantsData = await restaurantsResponse.json();
 
                 document.getElementById('loading-bar').style.display = 'none';
                 updateStats();
@@ -155,6 +166,7 @@
             switch(currentTab) {
                 case 'interim': return interimData;
                 case 'recrutement': return recrutementData;
+                case 'restaurants': return restaurantsData;
                 default: return agenciesData;
             }
         }
@@ -187,17 +199,31 @@
                             const cls = act === 'Transaction' ? 'transaction' : act === 'Gestion immobilière' ? 'gestion' : act === 'Syndic' ? 'syndic' : '';
                             return `<span class="tag ${cls}">${act}</span>`;
                         }).join('');
+                    } else if (currentTab === 'restaurants') {
+                        tagsHtml = `<span class="tag cuisine">${agency.type_cuisine}</span>`;
+                        if (agency.note_google) tagsHtml += ` <span class="tag ${getNoteClass(agency.note_google)}">${agency.note_google}</span>`;
                     } else if (agency.specialites) {
                         tagsHtml = agency.specialites.map(spec => `<span class="tag">${spec}</span>`).join('');
                     }
                     const phonePopupBtn = agency.telephone ? `<a href="tel:${agency.telephone}" class="phone">📞 Appeler</a>` : '';
                     const gpsPopupBtn = `<a href="https://www.google.com/maps/dir/?api=1&destination=${agency.lat},${agency.lng}" target="_blank" class="gps">🧭 GPS</a>`;
-                    const googlePopupBtn = `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(agency.nom)}+${encodeURIComponent(agency.adresse)}+${encodeURIComponent(agency.ville)}" target="_blank" class="google">📍 Fiche</a>`;
-                    marker.bindPopup(`<div class="popup-title">${agency.nom}</div><div class="popup-address">${agency.adresse}<br>${agency.code_postal} ${agency.ville}</div><div class="popup-actions">${phonePopupBtn}${gpsPopupBtn}${googlePopupBtn}</div><div class="popup-tags">${tagsHtml}</div>`);
+                    const googleLink = (currentTab === 'restaurants' && agency.lien_google_maps) ? agency.lien_google_maps : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(agency.nom)}+${encodeURIComponent(agency.adresse)}+${encodeURIComponent(agency.ville)}`;
+                    const googlePopupBtn = `<a href="${googleLink}" target="_blank" class="google">📍 Fiche Google</a>`;
+                    marker.bindPopup(`<div class="popup-title">${agency.nom}</div><div class="popup-address">${agency.adresse}<br>${agency.code_postal} ${agency.ville}</div>${agency.note_google ? '<div class="popup-phone">⭐ ' + agency.note_google + '</div>' : ''}<div class="popup-actions">${phonePopupBtn}${gpsPopupBtn}${googlePopupBtn}</div><div class="popup-tags">${tagsHtml}</div>`);
                     marker.agencyId = agency.id;
                     markers.addLayer(marker);
                 }
             });
+        }
+
+        function getNoteClass(note) {
+            if (!note) return '';
+            const match = note.match(/^([\d.]+)/);
+            if (!match) return 'note-mid';
+            const val = parseFloat(match[1]);
+            if (val >= 4.0) return 'note-high';
+            if (val >= 3.0) return 'note-mid';
+            return 'note-low';
         }
 
         function getFilteredAgencies() {
@@ -207,11 +233,17 @@
                 if (!matchesFilter) {
                     if (currentTab === 'immobilier' && a.activites) {
                         matchesFilter = a.activites.includes(currentFilter);
+                    } else if (currentTab === 'restaurants') {
+                        if (currentFilter === 'top') {
+                            matchesFilter = a.notes && a.notes.includes('TOP CIBLE');
+                        } else {
+                            matchesFilter = a.type_cuisine && a.type_cuisine.toLowerCase().includes(currentFilter.toLowerCase());
+                        }
                     } else if (a.specialites) {
                         matchesFilter = a.specialites.includes(currentFilter);
                     }
                 }
-                const matchesSearch = !searchQuery || a.nom.toLowerCase().includes(searchQuery.toLowerCase()) || a.adresse.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesSearch = !searchQuery || a.nom.toLowerCase().includes(searchQuery.toLowerCase()) || (a.adresse && a.adresse.toLowerCase().includes(searchQuery.toLowerCase())) || (a.type_cuisine && a.type_cuisine.toLowerCase().includes(searchQuery.toLowerCase()));
                 return matchesFilter && matchesSearch;
             });
         }
@@ -232,19 +264,28 @@
                         const cls = act === 'Transaction' ? 'transaction' : act === 'Gestion immobilière' ? 'gestion' : act === 'Syndic' ? 'syndic' : '';
                         return `<span class="tag ${cls}">${act}</span>`;
                     }).join('');
+                } else if (currentTab === 'restaurants') {
+                    tagsHtml = `<span class="tag cuisine">${a.type_cuisine}</span>`;
+                    if (a.note_google) tagsHtml += ` <span class="tag ${getNoteClass(a.note_google)}">${a.note_google}</span>`;
+                    if (a.notes && a.notes.includes('TOP CIBLE')) tagsHtml += ` <span class="tag top-cible">🎯 TOP CIBLE</span>`;
                 } else if (a.specialites) {
                     tagsHtml = a.specialites.map(spec => `<span class="tag">${spec}</span>`).join('');
                 }
                 const geocodedClass = (a.lat && a.lng) ? 'geocoded' : '';
                 const phoneBtn = a.telephone ? `<a href="tel:${a.telephone}" class="action-btn phone" onclick="event.stopPropagation()">📞 ${a.telephone}</a>` : '';
                 const gpsBtn = (a.lat && a.lng) ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}" target="_blank" class="action-btn gps" onclick="event.stopPropagation()">🧭 GPS</a>` : '';
-                const googleBtn = (a.lat && a.lng) ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.nom)}+${encodeURIComponent(a.adresse)}+${encodeURIComponent(a.ville)}" target="_blank" class="action-btn google" onclick="event.stopPropagation()">📍 Google</a>` : '';
-                const actionsHtml = (phoneBtn || gpsBtn || googleBtn) ? `<div class="agency-actions">${phoneBtn}${gpsBtn}${googleBtn}</div>` : '';
+                const googleLink = (currentTab === 'restaurants' && a.lien_google_maps) ? a.lien_google_maps : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.nom)}+${encodeURIComponent(a.adresse)}+${encodeURIComponent(a.ville)}`;
+                const googleBtn = `<a href="${googleLink}" target="_blank" class="action-btn google" onclick="event.stopPropagation()">📍 Fiche Google</a>`;
+                const actionsHtml = `<div class="agency-actions">${phoneBtn}${gpsBtn}${googleBtn}</div>`;
+                const noteHtml = (currentTab === 'restaurants' && a.note_google) ? `<div class="agency-note">⭐ ${a.note_google}</div>` : '';
+                const notesHtml = (currentTab === 'restaurants' && a.notes) ? `<div class="agency-notes">${a.notes}</div>` : '';
                 return `<div class="agency-card ${geocodedClass}" data-id="${a.id}" data-lat="${a.lat || ''}" data-lng="${a.lng || ''}">
                     <div class="agency-name">${a.nom}</div>
                     <div class="agency-address">${a.adresse}, ${a.code_postal} ${a.ville}</div>
+                    ${noteHtml}
                     ${actionsHtml}
                     <div class="agency-tags">${tagsHtml}</div>
+                    ${notesHtml}
                 </div>`;
             }).join('');
 
@@ -291,6 +332,11 @@
                 updateStats();
                 renderAgencies();
                 addMarkersToMap();
+                if (currentTab === 'restaurants') {
+                    map.setView([43.5734, 3.8104], 14);
+                } else {
+                    map.setView([43.6108, 3.8767], 13);
+                }
             });
         });
 
@@ -317,6 +363,14 @@
                     <button class="filter-btn" data-filter="IT">IT</button>
                     <button class="filter-btn" data-filter="Finance">Finance</button>
                     <button class="filter-btn" data-filter="Commercial">Commercial</button>
+                `;
+            } else if (currentTab === 'restaurants') {
+                filtersHtml += `
+                    <button class="filter-btn" data-filter="Française">Française</button>
+                    <button class="filter-btn" data-filter="Asiatique">Asiatique</button>
+                    <button class="filter-btn" data-filter="Pizza">Pizza</button>
+                    <button class="filter-btn" data-filter="Fast-food">Fast-food</button>
+                    <button class="filter-btn" data-filter="top">🎯 TOP</button>
                 `;
             }
 
