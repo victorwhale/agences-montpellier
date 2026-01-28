@@ -84,6 +84,35 @@
         .popup-actions .google { background: #fff3e0; color: #e65100; }
         .popup-tags { display: flex; gap: 4px; flex-wrap: wrap; }
         @media (max-width: 768px) { .container { flex-direction: column; } .sidebar { width: 100%; height: 50vh; } #map { height: 50vh; } }
+        /* Scraping styles */
+        .scrape-form { padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eee; }
+        .scrape-form input, .scrape-form select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; margin-bottom: 10px; }
+        .scrape-form input:focus, .scrape-form select:focus { outline: none; border-color: #667eea; }
+        .scrape-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .scrape-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .scrape-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .scrape-progress { padding: 15px; background: #e3f2fd; border-bottom: 1px solid #bbdefb; font-size: 0.9rem; color: #1565c0; }
+        .scrape-progress .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #1565c0; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .scrape-results { padding: 10px; }
+        .result-card { background: white; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; margin-bottom: 10px; position: relative; }
+        .result-card.outdated { border-left: 4px solid #e53935; }
+        .result-card.no-website { border-left: 4px solid #ff9800; }
+        .result-card.ok { border-left: 4px solid #4caf50; }
+        .result-name { font-weight: 600; font-size: 1rem; color: #333; margin-bottom: 8px; }
+        .result-domain { font-size: 0.85rem; color: #667eea; margin-bottom: 5px; }
+        .result-domain a { color: #667eea; text-decoration: none; }
+        .result-domain a:hover { text-decoration: underline; }
+        .result-year { font-size: 0.9rem; margin-bottom: 8px; padding: 4px 10px; border-radius: 15px; display: inline-block; }
+        .result-year.old { background: #ffebee; color: #c62828; font-weight: 600; }
+        .result-year.recent { background: #e8f5e9; color: #2e7d32; }
+        .result-mentions { font-size: 0.8rem; color: #888; margin-top: 5px; }
+        .result-mentions a { color: #667eea; }
+        .scrape-summary { padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin: 10px; border-radius: 10px; }
+        .scrape-summary h3 { margin-bottom: 10px; font-size: 1rem; }
+        .scrape-summary .stats-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .scrape-summary .stat-item { background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 8px; }
+        .scrape-summary .stat-item strong { font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -97,6 +126,7 @@
                     <button class="tab-btn" data-tab="interim">Intérim</button>
                     <button class="tab-btn" data-tab="recrutement">Recrutement</button>
                     <button class="tab-btn" data-tab="restaurants">Restaurants</button>
+                    <button class="tab-btn" data-tab="scraping">Scraping</button>
                 </div>
                 <div class="stats">
                     <div class="stat">
@@ -120,6 +150,23 @@
                 <button class="filter-btn" data-filter="Syndic">Syndic</button>
             </div>
             <div class="agency-list" id="agency-list"></div>
+            <!-- Scraping interface -->
+            <div id="scraping-panel" style="display: none; flex: 1; overflow-y: auto;">
+                <div class="scrape-form">
+                    <input type="text" id="scrape-city" placeholder="Nom de la ville (ex: Saint-Jean-de-Védas)">
+                    <select id="scrape-max">
+                        <option value="20">20 résultats max</option>
+                        <option value="50" selected>50 résultats max</option>
+                        <option value="100">100 résultats max</option>
+                    </select>
+                    <button class="scrape-btn" id="scrape-btn" onclick="startScraping()">🔍 Lancer le scraping</button>
+                </div>
+                <div class="scrape-progress" id="scrape-progress" style="display: none;">
+                    <span class="spinner"></span> <span id="scrape-status">Scraping en cours...</span>
+                </div>
+                <div id="scrape-summary"></div>
+                <div class="scrape-results" id="scrape-results"></div>
+            </div>
         </div>
         <div id="map"></div>
     </div>
@@ -383,10 +430,33 @@
                 currentFilter = 'all';
                 searchQuery = '';
                 document.getElementById('search').value = '';
-                updateFilters();
-                updateStats();
-                renderAgencies();
-                addMarkersToMap();
+
+                // Toggle scraping panel vs regular list
+                const scrapingPanel = document.getElementById('scraping-panel');
+                const agencyList = document.getElementById('agency-list');
+                const searchBox = document.querySelector('.search-box');
+                const filters = document.querySelector('.filters');
+                const stats = document.querySelector('.stats');
+
+                if (currentTab === 'scraping') {
+                    scrapingPanel.style.display = 'block';
+                    agencyList.style.display = 'none';
+                    searchBox.style.display = 'none';
+                    filters.style.display = 'none';
+                    stats.style.display = 'none';
+                    markers.clearLayers();
+                } else {
+                    scrapingPanel.style.display = 'none';
+                    agencyList.style.display = 'block';
+                    searchBox.style.display = 'block';
+                    filters.style.display = 'flex';
+                    stats.style.display = 'flex';
+                    updateFilters();
+                    updateStats();
+                    renderAgencies();
+                    addMarkersToMap();
+                }
+
                 if (currentTab === 'restaurants') {
                     map.setView([43.5734, 3.8104], 14);
                 } else {
@@ -441,6 +511,147 @@
                     addMarkersToMap();
                 });
             });
+        }
+
+        // Scraping functionality
+        const SCRAPER_API = 'http://localhost:3001/api/scrape';
+        let scrapingResults = [];
+
+        async function startScraping() {
+            const city = document.getElementById('scrape-city').value.trim();
+            if (!city) {
+                alert('Veuillez entrer un nom de ville');
+                return;
+            }
+
+            const maxResults = parseInt(document.getElementById('scrape-max').value);
+            const btn = document.getElementById('scrape-btn');
+            const progress = document.getElementById('scrape-progress');
+            const status = document.getElementById('scrape-status');
+            const resultsDiv = document.getElementById('scrape-results');
+            const summaryDiv = document.getElementById('scrape-summary');
+
+            btn.disabled = true;
+            progress.style.display = 'block';
+            status.textContent = `Scraping de ${city} en cours... Cela peut prendre quelques minutes.`;
+            resultsDiv.innerHTML = '';
+            summaryDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(SCRAPER_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ city, maxResults })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                scrapingResults = data.results || [];
+
+                // Display summary
+                summaryDiv.innerHTML = `
+                    <div class="scrape-summary">
+                        <h3>📊 Résultats pour ${data.city}</h3>
+                        <div class="stats-row">
+                            <div class="stat-item"><strong>${data.summary.totalBusinesses}</strong> entreprises</div>
+                            <div class="stat-item"><strong>${data.summary.withWebsites}</strong> avec site web</div>
+                            <div class="stat-item"><strong>${data.summary.outdatedSites}</strong> sites obsolètes</div>
+                            <div class="stat-item"><strong>${data.summary.withoutWebsites}</strong> sans site</div>
+                        </div>
+                    </div>
+                `;
+
+                // Display results
+                renderScrapingResults();
+
+                // Add markers to map
+                addScrapingMarkersToMap();
+
+            } catch (error) {
+                console.error('Scraping error:', error);
+                resultsDiv.innerHTML = `<div class="no-results">❌ Erreur: ${error.message}<br><br>Assurez-vous que le serveur API est lancé:<br><code>cd sjv-scraper && npm start</code></div>`;
+            } finally {
+                btn.disabled = false;
+                progress.style.display = 'none';
+            }
+        }
+
+        function renderScrapingResults() {
+            const resultsDiv = document.getElementById('scrape-results');
+
+            if (scrapingResults.length === 0) {
+                resultsDiv.innerHTML = '<div class="no-results">Aucun résultat</div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = scrapingResults.map(r => {
+                let cardClass = 'result-card';
+                let yearHtml = '';
+
+                if (!r.hasWebsite) {
+                    cardClass += ' no-website';
+                    yearHtml = '<span class="result-year" style="background:#fff3e0;color:#e65100;">Pas de site web</span>';
+                } else if (r.isOutdated) {
+                    cardClass += ' outdated';
+                    yearHtml = `<span class="result-year old">⚠️ ${r.oldestYear} - OBSOLÈTE</span>`;
+                } else if (r.oldestYear) {
+                    cardClass += ' ok';
+                    yearHtml = `<span class="result-year recent">✅ ${r.oldestYear}</span>`;
+                } else {
+                    yearHtml = '<span class="result-year" style="background:#f5f5f5;color:#666;">Date non trouvée</span>';
+                }
+
+                const websiteLink = r.website ? `<div class="result-domain"><a href="${r.website}" target="_blank">${r.domain}</a></div>` : '';
+                const mentionsLink = r.mentionsLegalesUrl ? `<div class="result-mentions"><a href="${r.mentionsLegalesUrl}" target="_blank">📜 Mentions légales</a></div>` : '';
+                const googleUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name + ' ' + (r.category || ''))}`;
+                const key = 'scraping_' + (r.domain || r.name.replace(/\s/g, '_'));
+                const isFav = favorites[key];
+                const isDone = doneItems[key];
+
+                return `
+                    <div class="${cardClass} ${isDone ? 'is-done' : ''}" data-key="${key}">
+                        <div class="status-btns">
+                            <button class="status-btn fav ${isFav ? 'active' : ''}" onclick="toggleScrapeFav('${key}', event)" title="Favori">${isFav ? '❤️' : '🤍'}</button>
+                            <button class="status-btn done ${isDone ? 'active' : ''}" onclick="toggleScrapeDone('${key}', event)" title="Fait">${isDone ? '✅' : '⬜'}</button>
+                        </div>
+                        <div class="result-name">${r.name}</div>
+                        ${websiteLink}
+                        ${yearHtml}
+                        ${r.yearsFound && r.yearsFound.length > 1 ? `<div style="font-size:0.75rem;color:#888;">Années trouvées: ${r.yearsFound.join(', ')}</div>` : ''}
+                        <div class="agency-actions">
+                            ${r.phone ? `<a href="tel:${r.phone}" class="action-btn phone" onclick="event.stopPropagation()">📞 ${r.phone}</a>` : ''}
+                            <a href="${googleUrl}" target="_blank" class="action-btn google" onclick="event.stopPropagation()">📍 Fiche Google</a>
+                            ${r.website ? `<a href="${r.website}" target="_blank" class="action-btn gps" onclick="event.stopPropagation()">🌐 Site</a>` : ''}
+                        </div>
+                        ${mentionsLink}
+                        ${r.error ? `<div style="font-size:0.75rem;color:#e53935;margin-top:5px;">⚠️ ${r.error}</div>` : ''}
+                        <div class="agency-tags"><span class="tag">${r.category || 'Non classé'}</span></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleScrapeFav(key, event) {
+            event.stopPropagation();
+            if (favorites[key]) { delete favorites[key]; } else { favorites[key] = true; }
+            localStorage.setItem('agences_favorites', JSON.stringify(favorites));
+            renderScrapingResults();
+        }
+
+        function toggleScrapeDone(key, event) {
+            event.stopPropagation();
+            if (doneItems[key]) { delete doneItems[key]; } else { doneItems[key] = true; }
+            localStorage.setItem('agences_done', JSON.stringify(doneItems));
+            renderScrapingResults();
+        }
+
+        function addScrapingMarkersToMap() {
+            markers.clearLayers();
+            // For scraping results, we don't have lat/lng, but we can add a note
+            // The map will show Montpellier area by default
         }
 
         initMap();
